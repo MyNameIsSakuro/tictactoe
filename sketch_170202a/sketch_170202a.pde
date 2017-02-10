@@ -116,6 +116,7 @@ void deda(position kur) {
     lentele[i][j]=curPlayer;
     if(arlaimejo(curPlayer))
       laimejes=curPlayer;
+    if (arlygiosios()) laimejes=3;
     curPlayer%=2;
   }
 }
@@ -143,7 +144,14 @@ boolean arlaimejo(int v) {
   }
   return false;
 }
-
+boolean arlygiosios(){
+  for (int i=0;i<n;i++){
+    for (int j=0;j<n;j++){
+      if(lentele[i][j]==0)return false;
+    }
+  }
+  return true;
+}
 void mouseClicked() {
   if(laimejes == 0){
     position pele = new position();
@@ -154,12 +162,22 @@ void mouseClicked() {
     restart();
 }
 void draw() {
-  if (laimejes!=0) {
+  if(laimejes!=0){
     background(255, 100, 255);
     textSize(50);
-    text("sveikinu", 50, 50);
-  } else {
+  }else{
     background(255);
+  }
+  if (laimejes==1) {
+    text("sveikinu xsą", 50, 50);
+  }
+  else if(laimejes==2){
+    text("sveikinu nulį", 50, 50);
+  }
+  else if (laimejes==3){
+    text("NEsveikinu", 50, 50);
+  }
+  else {
     grid();
     spalvinauzvesta();
     spalvina();
