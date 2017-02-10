@@ -29,6 +29,7 @@ void restart(){
 void setup() {
   strokeCap(ROUND);
   size(700, 700);
+  restart();
 }
 
 void grid() {
@@ -153,7 +154,7 @@ void draw() {
     background(255, 100, 255);
     text("sveikinu", 50, 50);
     if (pasp && laimejo)
-      setup();
+      restart();
     else
       laimejo=true;
   } else {
