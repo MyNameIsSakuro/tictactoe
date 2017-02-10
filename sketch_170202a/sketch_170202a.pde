@@ -163,23 +163,22 @@ void mouseClicked() {
     restart();
 }
 void draw() {
-  if (laimejes==1) {
+  if(laimejes!=0){
     background(255, 100, 255);
     textSize(50);
+  }else{
+    background(255);
+  }
+  if (laimejes==1) {
     text("sveikinu xsą", 50, 50);
   }
   else if(laimejes==2){
-    background(255, 100, 255);
-    textSize(50);
     text("sveikinu nulį", 50, 50);
   }
   else if (laimejes==3){
-    background(255, 100, 255);
-    textSize(50);
     text("NEsveikinu", 50, 50);
   }
   else {
-    background(255);
     grid();
     spalvinauzvesta();
     spalvina();
