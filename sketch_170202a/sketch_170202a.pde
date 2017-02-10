@@ -142,7 +142,6 @@ boolean arlaimejo(int v) {
     if (lentele[n-i-1][i]!=v)break;
     if (i==n-1) return true;
   }
- //if (arlygiosios()) return true;
   return false;
 }
 boolean arlygiosios(){
