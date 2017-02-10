@@ -158,6 +158,12 @@ void draw() {
     background(255, 100, 255);
     textSize(50);
     text("sveikinu", 50, 50);
+    String text = "laimėjo ";
+    if(laimejes==1)
+      text+="kryžiukai";
+    else
+      text+="nuliukai";
+    text( text, 50, 100);
   } else {
     background(255);
     grid();
