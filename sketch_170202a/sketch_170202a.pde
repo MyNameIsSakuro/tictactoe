@@ -1,19 +1,28 @@
 int n=3, h=600/(n+1);
 boolean kr=false;
-
-int lentele[][]=new int[n][n];
-boolean pasp=false, laimejo;
-
 color fillColor = color(50, 102, 100);
 
-PVector getMousePos() {
-  int i, j;
-  i=mouseX/h-1;
-  j=mouseY/h-1;
-  if (i>=0&&i<n&&j>=0&&j<n) {
-    return new PVector(i, j);
+int lentele[][]=new int[n][n];
+boolean pasp=false;
+int laimejes;
+int curPlayer = 0;
+
+class position{
+  boolean in=false;
+  int i,j;
+  position(){ //iš pelės koord
+    fromPix(mouseX,mouseY);
   }
-  return null;
+  void fromPix(float x, float y){ //iš pikselių
+    i=(int)x/h-1;
+    j=(int)y/h-1;
+    in = i>=0&&i<n&&j>=0&&j<n;
+  }
+  position(int x, int y){ //iš langelio koord
+    i=x;
+    j=y;
+    in = i>=0&&i<n&&j>=0&&j<n;
+  }
 }
 
 void restart(){
@@ -22,7 +31,7 @@ void restart(){
       lentele[i][j]=0;
     }
   }
-  laimejo=false;
+  laimejes=0;
   curPlayer = 0;
 }
 
@@ -44,23 +53,27 @@ void grid() {
   }
 }
 
+void langelioFonas(int i, int j){
+    fill(fillColor);
+    noStroke();
+    if (i==0&&j==0) {
+      rect((i+1)*h+6, (j+1)*h+6, h-11, h-11, 55, 0, 0, 0);
+    } else if (i==0&&j==n-1) {
+      rect((i+1)*h+6, (j+1)*h+6, h-11, h-12, 0, 0, 0, 55);
+    } else if (i==n-1&&j==0) {
+      rect((i+1)*h+6, (j+1)*h+6, h-12, h-11, 0, 55, 0, 0);
+    } else if (i==n-1&&j==n-1) {
+      rect((i+1)*h+6, (j+1)*h+6, h-12, h-12, 0, 0, 55, 0);
+    } else {
+      rect((i+1)*h+6, (j+1)*h+6, h-11, h-11);
+    }
+}
+
 void spalvina() {
   for (int i=0; i<n; i++) {
     for (int j=0; j<n; j++) {
       if (lentele[i][j] !=0) {
-        noStroke();
-        fill(fillColor);
-        if (i==0&&j==0) {
-          rect((i+1)*h+6, (j+1)*h+6, h-11, h-11, 55, 0, 0, 0);
-        } else if (i==0&&j==n-1) {
-          rect((i+1)*h+6, (j+1)*h+6, h-11, h-12, 0, 0, 0, 55);
-        } else if (i==n-1&&j==0) {
-          rect((i+1)*h+6, (j+1)*h+6, h-12, h-11, 0, 55, 0, 0);
-        } else if (i==n-1&&j==n-1) {
-          rect((i+1)*h+6, (j+1)*h+6, h+-12, h+-12, 0, 0, 55, 0);
-        } else {
-          rect((i+1)*h+6, (j+1)*h+6, h-11, h-11);
-        }
+        langelioFonas(i,j);
         if(lentele[i][j]==1)
           kryziukas(i,j);
         else if(lentele[i][j]==2)
@@ -86,37 +99,23 @@ void nuliukas(int i, int j) {
 }
 
 void spalvinauzvesta() {
-  PVector pele = getMousePos();
-  if (pele!=null) {
-    fill(fillColor);
-    noStroke();
-    int i = (int)pele.x;
-    int j = (int)pele.y;
-    if (i==0&&j==0) {
-      rect((i+1)*h+6, (j+1)*h+6, h-11, h-11, 55, 0, 0, 0);
-    } else if (i==0&&j==n-1) {
-      rect((i+1)*h+6, (j+1)*h+6, h-11, h-12, 0, 0, 0, 55);
-    } else if (i==n-1&&j==0) {
-      rect((i+1)*h+6, (j+1)*h+6, h-12, h-11, 0, 55, 0, 0);
-    } else if (i==n-1&&j==n-1) {
-      rect((i+1)*h+6, (j+1)*h+6, h+-12, h+-12, 0, 0, 55, 0);
-    } else {
-      rect((i+1)*h+6, (j+1)*h+6, h-11, h-11);
-    }
+  position pele = new position();
+  if (pele.in) {
+    langelioFonas(pele.i, pele.j);
   }
 }
 
-int curPlayer = 0;
-
-void deda(PVector kur) {
+void deda(position kur) {
   if(kur==null)
     return;
   noStroke();
-  int i = (int)kur.x;
-  int j = (int)kur.y;
+  int i = kur.i;
+  int j = kur.j;
   if(lentele[i][j] == 0){
     curPlayer++;
     lentele[i][j]=curPlayer;
+    if(arlaimejo(curPlayer))
+      laimejes=curPlayer;
     curPlayer%=2;
   }
 }
@@ -138,31 +137,31 @@ boolean arlaimejo(int v) {
     if (lentele[i][i]!=v)break;
     if (i==n-1) return true;
   }
-  for (int i=n-1; i>=0; i--) {
-    if (lentele[i][i]!=v)break;
-    if (i==0) return true;
+  for (int i=0; i<n; i++) {
+    if (lentele[n-i-1][i]!=v)break;
+    if (i==n-1) return true;
   }
   return false;
 }
 
 void mouseClicked() {
-  deda(getMousePos());
-  pasp=true;
+  if(laimejes == 0){
+    position pele = new position();
+    if (pele.in) 
+      deda(new position());
+  }
+  else
+    restart();
 }
 void draw() {
-  if (arlaimejo(1)||arlaimejo(2)) {
+  if (laimejes!=0) {
     background(255, 100, 255);
+    textSize(50);
     text("sveikinu", 50, 50);
-    if (pasp && laimejo)
-      restart();
-    else
-      laimejo=true;
   } else {
-    background(255, 255, 255);
+    background(255);
     grid();
     spalvinauzvesta();
     spalvina();
   }
-
-  pasp=false;
 }
